@@ -47,6 +47,7 @@ public class LogLib {
         }
         if (!UtilLib.isEmptySafe(t)) {
             writeLog(ERR_LOG_FILE, TAG.ERROR, getStackTraceStr(t));
+            t.printStackTrace();
         }
     }
 
@@ -54,6 +55,7 @@ public class LogLib {
         if (!UtilLib.isEmptySafe(t)) {
             writeLog(ERR_LOG_FILE, TAG.ERROR, t.getMessage());
             writeLog(ERR_LOG_FILE, TAG.ERROR, getStackTraceStr(t));
+            t.printStackTrace();
         }
     }
 

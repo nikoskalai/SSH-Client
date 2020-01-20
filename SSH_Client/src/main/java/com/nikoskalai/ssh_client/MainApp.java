@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.net.URL;
 import java.util.Properties;
 
 
@@ -17,12 +18,14 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
+        URL url = getClass().getClassLoader().getResource("fxml/Scene.fxml");
+        System.out.println(url);
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/Scene.fxml"));
         
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/styles/Styles.css");
         
-        stage.setTitle(PropertyLoader.getProperty("window.title"));
+        stage.setTitle(getWindowTitle());
         stage.setScene(scene);
         stage.show();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -32,6 +35,11 @@ public class MainApp extends Application {
             }
         });
 
+    }
+
+    private String getWindowTitle() {
+
+        return PropertyLoader.getProperty("window.title");
     }
 
     private static void exitApp() {

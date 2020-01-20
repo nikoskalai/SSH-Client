@@ -10,8 +10,8 @@
          <items>
             <TreeView id="treeView" fx:id="treePane" prefWidth="50.0" />
             <TabPane fx:id="tabbedPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-               <tabs>
-               </tabs></TabPane>
+               <tabs/>
+            </TabPane>
          </items>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

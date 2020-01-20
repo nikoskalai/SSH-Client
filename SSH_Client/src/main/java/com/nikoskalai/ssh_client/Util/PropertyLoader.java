@@ -14,13 +14,13 @@ public class PropertyLoader {
     private static Properties properties = null;
 
     private static final String STRING_PROPERTIES = "properties/string.properties";
+    private static final String VERSION_PROPERTIES = "properties/version.properties";
 
     public static String getProperty(String property) {
         if (UtilLib.isEmptySafe(property)) {
             return "";
         }
-        System.out.println(getPropertiesInstance().getProperty(property));
-        return properties.getProperty(property);
+        return getPropertiesInstance().getProperty(property);
     }
 
     private static Properties getPropertiesInstance() {
@@ -31,14 +31,20 @@ public class PropertyLoader {
     }
 
     private static void readProperties() {
-        try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(STRING_PROPERTIES)) {
-
-            properties = new Properties();
-
+        try {
+            if (properties == null) {
+                properties = new Properties();
+            } else {
+                properties.clear();
+            }
             // load a properties file
+            InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(STRING_PROPERTIES);
             properties.load(input);
+            input = Thread.currentThread().getContextClassLoader().getResourceAsStream(VERSION_PROPERTIES);
+            properties.load(input);
+            input.close();
             System.out.println(properties);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             LogLib.writeErrorLog(ex);
         }
