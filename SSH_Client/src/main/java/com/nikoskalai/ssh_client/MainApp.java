@@ -2,6 +2,8 @@ package com.nikoskalai.ssh_client;
 
 import com.nikoskalai.ssh_client.Util.Constants;
 import com.nikoskalai.ssh_client.Util.PropertyLoader;
+import com.nikoskalai.ssh_client.config.SSHConfig;
+import com.nikoskalai.ssh_client.config.SSHConfigurator;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.Properties;
 
@@ -18,6 +21,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        System.out.println(System.getProperties());
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/Scene.fxml"));
         
         Scene scene = new Scene(root);
@@ -33,6 +37,18 @@ public class MainApp extends Application {
             }
         });
 
+        getFonts();
+    }
+
+    private void getFonts() {
+        GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Font[] fonts = e.getAllFonts();
+        for (Font f : fonts)
+        {
+            if (f.getFamily().contains("Ubuntu")) {
+                System.out.println(f);
+            }
+        }
     }
 
     private String getWindowTitle() {

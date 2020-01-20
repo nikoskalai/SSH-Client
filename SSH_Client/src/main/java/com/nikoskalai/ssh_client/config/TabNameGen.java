@@ -6,7 +6,7 @@ public class TabNameGen implements TabNameGenerator {
 
     private String prefix = "SSH Session";
     private static TabNameGen tabNameGen;
-    private static int activeInstances = 0;
+    public static int activeInstances = 0;
 
     @Override
     public String next() {
