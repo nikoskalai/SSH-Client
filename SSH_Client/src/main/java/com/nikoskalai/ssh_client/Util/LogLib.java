@@ -31,7 +31,7 @@ public class LogLib {
         String currentDate = sdf.format(Calendar.getInstance().getTime());
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
-            writer.write("[" + currentDate + "] - [" + tag.getTagName() + "] - " + text);
+            writer.append("[" + currentDate + "] - [" + tag.getTagName() + "] - " + text);
         } catch (IOException io) {
             io.printStackTrace();
         }
