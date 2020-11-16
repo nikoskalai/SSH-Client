@@ -1,4 +1,6 @@
-## Welcome to GitHub Pages
+# Welcome to SSH Client
+
+The below will be kept as template until the project has been developed sufficiently.
 
 You can use the [editor on GitHub](https://github.com/nikoskalai/SSH-Client/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
