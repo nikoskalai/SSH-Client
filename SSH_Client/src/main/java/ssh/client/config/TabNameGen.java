@@ -14,8 +14,12 @@ public class TabNameGen implements TabNameGenerator {
         if (UtilLib.isEmptySafe(name)) {
             return prefix + "_" + getNextInstance();
         } else {
-            getNextInstance();
-            return name;
+            if (activeInstances == 0) {
+                getNextInstance();
+                return name;
+            } else {
+                return name + "_" + getNextInstance();
+            }
         }
     }
 

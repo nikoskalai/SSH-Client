@@ -11,6 +11,7 @@ import java.util.Objects;
 public class SSHConfig {
 
     private static final String LOGIN_ACTIONS_SEPARATOR = "---";
+    private String name;
     private String ipAddress;
     private String username;
     private String password;
@@ -23,7 +24,15 @@ public class SSHConfig {
     private TerminalConfig theme = Themes.getDefaultTheme();
 
     public String getName() {
-        return getUsername() + "@" + getIpAddress();
+        if (UtilLib.isEmptySafe(name)) {
+            return getUsername() + "@" + getIpAddress();
+        } else {
+            return name;
+        }
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getIpAddress() {
