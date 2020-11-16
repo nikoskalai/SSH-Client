@@ -23,14 +23,15 @@ public class LogLib {
 
     private static final String dateFormat = "yyyy/MM/dd HH:mm:ss";
     public static final String LOG_FILE = "stdout.log";
-    public static final String ERR_LOG_FILE = "stderr.log";
+    public static final String ERR_LOG_FILE = "stdout.log";
 
     private static void writeLog(String logFile, TAG tag, String text) {
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         String currentDate = sdf.format(Calendar.getInstance().getTime());
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
-            writer.write("[" + currentDate + "] - [" + tag.getTagName() + "] - " + text);
+            writer.append("[" + currentDate + "] - [" + tag.getTagName() + "] - " + text);
+            writer.close();
         } catch (IOException io) {
             io.printStackTrace();
         }

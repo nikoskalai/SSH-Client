@@ -2,16 +2,12 @@ package ssh.client;
 
 import com.kodedu.terminalfx.TerminalBuilder;
 import com.kodedu.terminalfx.TerminalTab;
-import ssh.client.Util.Constants;
 import ssh.client.Util.LogLib;
-import ssh.client.config.SSHConfig;
-import ssh.client.config.SSHConfigurator;
-import ssh.client.config.TabNameGen;
-import ssh.client.config.Themes;
+import ssh.client.Util.UtilLib;
+import ssh.client.config.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
 
@@ -31,56 +27,40 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         SSHConfigurator.readConfigFiles();
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                for (SSHConfig sshConfig: SSHConfigurator.getConfigs()) {
-                    openTerminal(sshConfig);
-                }
-                if (TabNameGen.activeInstances <= 0) {
-                    initTerminal();
-                }
+        Platform.runLater(() -> {
+            for (SSHConfig sshConfig: SSHConfigurator.getOpenOnStartupConfigs()) {
+                openTerminal(sshConfig);
+            }
+            if (TabNameGen.activeInstances <= 0) {
+                initTerminal();
             }
         });
     }
 
     private void openTerminal(final SSHConfig sshConfig) {
-        TerminalBuilder terminalBuilder = new TerminalBuilder(Themes.getDefaultTheme());
+        TerminalBuilder terminalBuilder = new TerminalBuilder(Themes.getDarkTheme());
 
-        terminalBuilder.setNameGenerator(TabNameGen.getTabNameGen());
+        terminalBuilder.setNameGenerator(TabNameGen.getTabNameGen(sshConfig.getName()));
         final TerminalTab terminal = terminalBuilder.newTerminal();
         terminal.setClosable(true);
-        terminal.setText(sshConfig.getName());
-        terminal.onTerminalFxReady(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    terminal.getTerminal().command(sshConfig.getSSHCommand() + Constants.LINE_SEPARATOR);
-                    terminal.getTerminal().command(sshConfig.getPassword() + Constants.LINE_SEPARATOR);
-                } catch (Exception e) {
-                    LogLib.writeErrorLog(e);
-                }
-//                for (String command: sshConfig.getLoginActions()) {
-//                    terminal.getTerminal().command(command + System.getProperty("line.separator"));
-//                }
-
+        terminal.onTerminalFxReady(() -> {
+            try {
+                SSHActions.login(terminal, sshConfig);
+            } catch (Exception e) {
+                LogLib.writeErrorLog(e);
             }
         });
         tabbedPane.getTabs().add(terminal);
     }
 
     private void initTerminal() {
-        TerminalBuilder terminalBuilder = new TerminalBuilder(Themes.getDefaultTheme());
+        TerminalBuilder terminalBuilder = new TerminalBuilder(Themes.getDarkTheme());
 
         terminalBuilder.setNameGenerator(TabNameGen.getTabNameGen());
         final TerminalTab terminal = terminalBuilder.newTerminal();
         terminal.setClosable(true);
-        terminal.onTerminalFxReady(new Runnable() {
-            @Override
-            public void run() {
-                terminal.getTerminal().command("java -version\r");
-                terminal.getTerminal().command("dir\r");
-            }
+        terminal.onTerminalFxReady(() -> {
+            terminal.getTerminal().command(UtilLib.getCommandString("java -version"));
         });
         tabbedPane.getTabs().add(terminal);
     }

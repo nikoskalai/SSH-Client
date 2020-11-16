@@ -19,6 +19,16 @@ public class SSHConfigurator {
         return configs;
     }
 
+    public static List<SSHConfig> getOpenOnStartupConfigs() {
+        ArrayList<SSHConfig> openOnStartups = new ArrayList<>();
+        for(SSHConfig sshConfig:getConfigs()) {
+            if (sshConfig.isOpenOnStartup()) {
+                openOnStartups.add(sshConfig);
+            }
+        }
+        return openOnStartups;
+    }
+
     public static void readConfigFiles() {
         configs = new ArrayList<>();
         File currentDir = new File(System.getProperty("user.dir"));
@@ -38,7 +48,7 @@ public class SSHConfigurator {
             BufferedReader reader = new BufferedReader(new FileReader(f));
             String line=null;
             SSHConfig sshConfig = new SSHConfig();
-            sshConfig.setName(f.getName());
+//            sshConfig.setName(f.getName());
             while ((line=reader.readLine()) != null) {
                 if (line.startsWith("ip=")) {
                     sshConfig.setIpAddress(line.replaceFirst("ip=",""));
@@ -59,6 +69,12 @@ public class SSHConfigurator {
                     } else {
                         sshConfig.setTheme(Themes.getDefaultTheme());
                     }
+                } else if (line.startsWith("passwordDelay=")) {
+                    sshConfig.setPasswordDelay(line.replaceFirst("passwordDelay=",""));
+                } else if (line.startsWith("loginActionsDelay=")) {
+                    sshConfig.setLoginActionsDelay(line.replaceFirst("loginActionsDelay=",""));
+                } else if (line.startsWith("openOnStartup=")) {
+                    sshConfig.setOpenOnStartup(line.replaceFirst("openOnStartup=",""));
                 }
             }
             if (!sshConfig.isEmpty()) {

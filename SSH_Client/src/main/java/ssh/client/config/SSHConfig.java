@@ -1,6 +1,8 @@
 package ssh.client.config;
 
 import com.kodedu.terminalfx.config.TerminalConfig;
+import ssh.client.Util.Constants;
+import ssh.client.Util.LogLib;
 import ssh.client.Util.UtilLib;
 
 import java.util.ArrayList;
@@ -9,21 +11,19 @@ import java.util.Objects;
 public class SSHConfig {
 
     private static final String LOGIN_ACTIONS_SEPARATOR = "---";
-    private String name;
     private String ipAddress;
     private String username;
     private String password;
     private String port = "22";
     private ArrayList<String> loginActions;
     private boolean openOnStartup;
+    private int passwordDelay = 500;
+    private int loginActionsDelay = 500;
+    //TODO local terminal path
     private TerminalConfig theme = Themes.getDefaultTheme();
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return getUsername() + "@" + getIpAddress();
     }
 
     public String getIpAddress() {
@@ -58,12 +58,34 @@ public class SSHConfig {
         this.port = port;
     }
 
-    public ArrayList<String> getLoginActions() {
-        return loginActions;
+    public int getPasswordDelay() {
+        return passwordDelay;
     }
 
-    public void setLoginActions(ArrayList<String> loginActions) {
-        this.loginActions = loginActions;
+    public void setPasswordDelay(String passwordDelay) {
+        try {
+            this.passwordDelay = Integer.valueOf(passwordDelay);
+        } catch (Exception e) {
+            this.passwordDelay = Constants.DEFAULT_PASSWORD_DELAY;
+            LogLib.writeErrorLog("Could not set password delay from " + passwordDelay + ". Setting default " + Constants.DEFAULT_PASSWORD_DELAY + "ms.", e);
+        }
+    }
+
+    public int getLoginActionsDelay() {
+        return loginActionsDelay;
+    }
+
+    public void setLoginActionsDelay(String loginActionsDelay) {
+        try {
+            this.loginActionsDelay = Integer.valueOf(loginActionsDelay);
+        } catch (Exception e) {
+            this.loginActionsDelay = Constants.DEFAULT_LOGIN_ACTIONS_DELAY;
+            LogLib.writeErrorLog("Could not set login actions delay from " + loginActionsDelay + ". Setting default " + Constants.DEFAULT_LOGIN_ACTIONS_DELAY + "ms.", e);
+        }
+    }
+
+    public ArrayList<String> getLoginActions() {
+        return loginActions;
     }
 
     public void setLoginActions(String loginActionsStr) {
@@ -77,8 +99,11 @@ public class SSHConfig {
         return openOnStartup;
     }
 
-    public void setOpenOnStartup(boolean openOnStartup) {
-        this.openOnStartup = openOnStartup;
+    public void setOpenOnStartup(String openOnStartup) {
+        this.openOnStartup = false;
+        if (!UtilLib.isEmptySafe(openOnStartup) && (openOnStartup.equals("1") || openOnStartup.equalsIgnoreCase("TRUE"))) {
+            this.openOnStartup = true;
+        }
     }
 
     public TerminalConfig getTheme() {
@@ -92,13 +117,15 @@ public class SSHConfig {
     @Override
     public String toString() {
         return "SSHConfig{" +
-                "name='" + name + "\'" +
+//                "name='" + name + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", port='" + port + '\'' +
                 ", loginActions=" + loginActions +
                 ", openOnStartup=" + openOnStartup +
+                ", passwordDelay=" + passwordDelay +
+                ", loginActionsDelay=" + loginActionsDelay +
                 ", theme=" + theme +
                 '}';
     }
@@ -130,8 +157,8 @@ public class SSHConfig {
                 UtilLib.isEmptySafe(password) &&
                 UtilLib.isEmptySafe(port) &&
                 UtilLib.isEmptySafe(loginActions) &&
-                UtilLib.isEmptySafe(theme) &&
-                UtilLib.isEmptySafe(name);
+                UtilLib.isEmptySafe(theme);
+//                UtilLib.isEmptySafe(name);
     }
 
     public String getSSHCommand() {

@@ -16,4 +16,8 @@ public class UtilLib {
             return true;
         }
     }
+
+    public static String getCommandString(String command) {
+        return command + Constants.LINE_SEPARATOR;
+    }
 }
