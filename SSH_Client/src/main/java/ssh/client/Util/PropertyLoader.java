@@ -34,12 +34,10 @@ public class PropertyLoader {
             } else {
                 properties.clear();
             }
-            // load a properties file
             InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(STRING_PROPERTIES);
             properties.load(input);
             input.close();
             loadMavenProperties();
-//            System.out.println(properties);
         } catch (Exception ex) {
             ex.printStackTrace();
             LogLib.writeErrorLog(ex);
@@ -47,6 +45,10 @@ public class PropertyLoader {
     }
 
     private static void loadMavenProperties() {
-        properties.put("version", PropertyLoader.class.getPackage().getImplementationVersion());
+        String implVersion = PropertyLoader.class.getPackage().getImplementationVersion();
+        if (!UtilLib.isEmptySafe(implVersion)) {
+            implVersion = "0.1";
+        }
+        properties.put("application.version", implVersion);
     }
 }
