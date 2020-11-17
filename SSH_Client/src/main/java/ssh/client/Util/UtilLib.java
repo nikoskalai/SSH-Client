@@ -20,4 +20,12 @@ public class UtilLib {
     public static String getCommandString(String command) {
         return command + Constants.LINE_SEPARATOR;
     }
+
+    public static void sleepSafe(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (Exception e) {
+            LogLib.writeErrorLog(e);
+        }
+    }
 }

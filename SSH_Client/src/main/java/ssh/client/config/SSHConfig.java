@@ -126,7 +126,7 @@ public class SSHConfig {
     @Override
     public String toString() {
         return "SSHConfig{" +
-//                "name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
@@ -166,8 +166,8 @@ public class SSHConfig {
                 UtilLib.isEmptySafe(password) &&
                 UtilLib.isEmptySafe(port) &&
                 UtilLib.isEmptySafe(loginActions) &&
-                UtilLib.isEmptySafe(theme);
-//                UtilLib.isEmptySafe(name);
+                UtilLib.isEmptySafe(theme) &&
+                UtilLib.isEmptySafe(name);
     }
 
     public String getSSHCommand() {

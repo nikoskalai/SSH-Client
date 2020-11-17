@@ -50,8 +50,8 @@ public class SSHConfigurator {
             SSHConfig sshConfig = new SSHConfig();
 //            sshConfig.setName(f.getName());
             while ((line=reader.readLine()) != null) {
-                if (line.startsWith("name=")) {
-                    sshConfig.setIpAddress(line.replaceFirst("name=",""));
+                if (line.startsWith("name=") && !line.startsWith("username=")) {
+                    sshConfig.setName(line.replaceFirst("name=",""));
                 } else if (line.startsWith("ip=")) {
                     sshConfig.setIpAddress(line.replaceFirst("ip=",""));
                 } else if (line.startsWith("username=")) {
