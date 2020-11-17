@@ -46,9 +46,8 @@ public class PropertyLoader {
 
     private static void loadMavenProperties() {
         String implVersion = PropertyLoader.class.getPackage().getImplementationVersion();
-        if (UtilLib.isEmptySafe(implVersion)) {
-            implVersion = "0.1";
+        if (!UtilLib.isEmptySafe(implVersion)) {
+            properties.put("application.version", implVersion);
         }
-        properties.put("application.version", implVersion);
     }
 }
