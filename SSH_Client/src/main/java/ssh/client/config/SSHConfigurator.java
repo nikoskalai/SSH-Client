@@ -37,7 +37,7 @@ public class SSHConfigurator {
                 processConfigFile(f);
             }
         }
-        System.out.println(configs);
+//        System.out.println(configs);
     }
 
     private static void processConfigFile(File f) {

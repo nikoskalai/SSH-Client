@@ -12,7 +12,6 @@ public class PropertyLoader {
     private static Properties properties = null;
 
     private static final String STRING_PROPERTIES = "properties/string.properties";
-    private static final String VERSION_PROPERTIES = "properties/version.properties";
 
     public static String getProperty(String property) {
         if (UtilLib.isEmptySafe(property)) {
@@ -38,13 +37,16 @@ public class PropertyLoader {
             // load a properties file
             InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(STRING_PROPERTIES);
             properties.load(input);
-            input = Thread.currentThread().getContextClassLoader().getResourceAsStream(VERSION_PROPERTIES);
-            properties.load(input);
             input.close();
-            System.out.println(properties);
+            loadMavenProperties();
+//            System.out.println(properties);
         } catch (Exception ex) {
             ex.printStackTrace();
             LogLib.writeErrorLog(ex);
         }
+    }
+
+    private static void loadMavenProperties() {
+        properties.put("version", PropertyLoader.class.getPackage().getImplementationVersion());
     }
 }

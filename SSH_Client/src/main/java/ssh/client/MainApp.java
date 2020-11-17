@@ -47,8 +47,8 @@ public class MainApp extends Application {
     }
 
     private String getWindowTitle() {
-
-        return PropertyLoader.getProperty("window.title");
+        String windowTitle = PropertyLoader.getProperty("window.title") + PropertyLoader.getProperty("version");
+        return windowTitle;
     }
 
     private static void exitApp() {
