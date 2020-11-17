@@ -6,11 +6,13 @@ import java.util.Calendar;
 
 public class LogLib {
 
+    private static boolean enableDebugLogging = true;
+
     public enum TAG {
         INFO("INFO"),
+        DEBUG("DEBUG"),
         ERROR("ERROR");
-
-        private String str;
+        private final String str;
 
         TAG(String str) {
             this.str = str;
@@ -29,11 +31,17 @@ public class LogLib {
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         String currentDate = sdf.format(Calendar.getInstance().getTime());
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true));
             writer.append("[" + currentDate + "] - [" + tag.getTagName() + "] - " + text);
             writer.close();
         } catch (IOException io) {
             io.printStackTrace();
+        }
+    }
+
+    public static void writeDebugLog(String text) {
+        if (enableDebugLogging) {
+            writeLog(LOG_FILE, TAG.DEBUG, text);
         }
     }
 
