@@ -1,5 +1,8 @@
 package ssh.client.Util;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class UtilLib {
     public static boolean isEmptySafe(Object obj) {
         if (obj instanceof String) {
@@ -10,11 +13,7 @@ public class UtilLib {
     }
 
     private static boolean isEmptySafe(String t) {
-        if (t != null && !t.trim().isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return t == null || t.trim().isEmpty();
     }
 
     public static String getCommandString(String command) {

@@ -1,10 +1,8 @@
-package ssh.client.config;
+package ssh.client.ssh_config;
 
 import com.kodedu.terminalfx.TerminalTab;
-import ssh.client.Util.Constants;
 import ssh.client.Util.LogLib;
 import ssh.client.Util.UtilLib;
-import ssh.client.config.SSHConfig;
 
 public class SSHActions {
 

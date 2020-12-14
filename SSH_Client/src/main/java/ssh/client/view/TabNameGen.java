@@ -1,4 +1,4 @@
-package ssh.client.config;
+package ssh.client.view;
 
 import com.kodedu.terminalfx.config.TabNameGenerator;
 import ssh.client.Util.UtilLib;

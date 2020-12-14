@@ -24,6 +24,7 @@ public class LogLib {
     public enum TAG {
         INFO("INFO"),
         DEBUG("DEBUG"),
+        WARNING("WARNING"),
         ERROR("ERROR");
         private final String str;
 
@@ -63,6 +64,16 @@ public class LogLib {
 
     public static void writeInfoLog(String text) {
         writeLog(LOG_FILE, TAG.INFO, text);
+    }
+
+    public static void writeWarningLog(String text) {
+        String logFile = LOG_FILE;
+        if (separateErrorLogging) {
+            logFile = ERR_LOG_FILE;
+        }
+        if (!UtilLib.isEmptySafe(text)) {
+            writeLog(logFile, TAG.WARNING, text);
+        }
     }
 
     public static void writeErrorLog(String text, Throwable t) {

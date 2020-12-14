@@ -1,10 +1,14 @@
-package ssh.client.config;
+package ssh.client.ssh_config;
 
 import com.kodedu.terminalfx.config.TerminalConfig;
 import ssh.client.Util.Constants;
 import ssh.client.Util.LogLib;
 import ssh.client.Util.UtilLib;
+import ssh.client.config.Themes;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -22,6 +26,75 @@ public class SSHConfig {
     private int loginActionsDelay = 500;
     //TODO local terminal path
     private TerminalConfig theme = Themes.getDefaultTheme();
+    private boolean isFolder = false;
+    private boolean isRootFolder = false;
+    private File file;
+
+    public SSHConfig() {
+        super();
+    }
+
+    public static SSHConfig setupFolder(String path) {
+        SSHConfig sshConfig = new SSHConfig(path);
+        SSHConfigStore.addSSHConfigInList(sshConfig);
+        return sshConfig;
+    }
+
+    public static SSHConfig setupRootFolder(String path) {
+        SSHConfig sshConfig = new SSHConfig(path);
+        sshConfig.setIsRootFolder(true);
+        SSHConfigStore.addSSHConfigInList(sshConfig);
+        return sshConfig;
+    }
+
+    public SSHConfig(String path) {
+        setFile(new File(path));
+        SSHConfigStore.addSSHConfigInList(this);
+    }
+
+    public SSHConfig(File f) {
+        if (UtilLib.isEmptySafe(f)) {
+            return;
+        }
+        setFile(f);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(f));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("name=") && !line.startsWith("username=")) {
+                    setName(line.replaceFirst("name=", ""));
+                } else if (line.startsWith("ip=")) {
+                    setIpAddress(line.replaceFirst("ip=", ""));
+                } else if (line.startsWith("username=")) {
+                    setUsername(line.replaceFirst("username=", ""));
+                } else if (line.startsWith("password=")) {
+                    setPassword(line.replaceFirst("password=", ""));
+                } else if (line.startsWith("port=")) {
+                    setPort(line.replaceFirst("port=", ""));
+                } else if (line.startsWith("login_actions=")) {
+                    setLoginActions(line.replaceFirst("login_actions=", ""));
+                } else if (line.startsWith("theme=")) {
+                    String theme = line.replaceFirst("theme=", "");
+                    if (theme.equalsIgnoreCase("Dark")) {
+                        setTheme(Themes.getDarkTheme());
+                    } else if (theme.equalsIgnoreCase("Cygwin")) {
+                        setTheme(Themes.getCygwinTheme());
+                    } else {
+                        setTheme(Themes.getDefaultTheme());
+                    }
+                } else if (line.startsWith("passwordDelay=")) {
+                    setPasswordDelay(line.replaceFirst("passwordDelay=", ""));
+                } else if (line.startsWith("loginActionsDelay=")) {
+                    setLoginActionsDelay(line.replaceFirst("loginActionsDelay=", ""));
+                } else if (line.startsWith("openOnStartup=")) {
+                    setOpenOnStartup(line.replaceFirst("openOnStartup=", ""));
+                }
+            }
+        } catch (Exception e) {
+            LogLib.writeErrorLog(e);
+        }
+        SSHConfigStore.addSSHConfigInList(this);
+    }
 
     public String getName() {
         if (UtilLib.isEmptySafe(name)) {
@@ -53,6 +126,10 @@ public class SSHConfig {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getPasswordMasked() {
+        return "********";
     }
 
     public void setPassword(String password) {
@@ -123,20 +200,32 @@ public class SSHConfig {
         this.theme = theme;
     }
 
-    @Override
-    public String toString() {
+    public String objectToString() {
         return "SSHConfig{" +
                 "name='" + name + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + getPasswordMasked() + '\'' +
                 ", port='" + port + '\'' +
                 ", loginActions=" + loginActions +
                 ", openOnStartup=" + openOnStartup +
                 ", passwordDelay=" + passwordDelay +
                 ", loginActionsDelay=" + loginActionsDelay +
                 ", theme=" + theme +
+                ", isFolder=" + isFolder +
+                ", isRootFolder=" + isRootFolder +
+                ", file=" + file +
                 '}';
+    }
+
+    @Override
+    public String toString() {
+        if (isRootFolder())
+            return getAbsolutePath();
+        else if (isFolder())
+            return getFileName();
+        else
+            return "" + getFileName() + " [\"" + name + "\" - " + username + "@" + ipAddress + "]";
     }
 
     @Override
@@ -172,5 +261,41 @@ public class SSHConfig {
 
     public String getSSHCommand() {
         return "ssh " + getUsername() + "@" + getIpAddress() + " -p " + getPort();
+    }
+
+    public boolean isFolder() {
+        return isFolder;
+    }
+
+    public void setIsFolder(boolean isFolder) {
+        this.isFolder = isFolder;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+        if (file.isDirectory()) {
+            setIsFolder(true);
+        }
+    }
+
+    public boolean isRootFolder() {
+        return isRootFolder;
+    }
+
+    public void setIsRootFolder(boolean rootFolder) {
+        isRootFolder = rootFolder;
+        setIsFolder(true);
+    }
+
+    public String getAbsolutePath() {
+        return file.getPath();
+    }
+
+    public String getFileName() {
+        return file.getName();
+    }
+
+    public File getFile() {
+        return file;
     }
 }
