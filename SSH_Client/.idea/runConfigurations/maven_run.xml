@@ -11,6 +11,7 @@
           <option name="goals">
             <list>
               <option value="-e" />
+              <option value="-X" />
               <option value="javafx:run" />
             </list>
           </option>

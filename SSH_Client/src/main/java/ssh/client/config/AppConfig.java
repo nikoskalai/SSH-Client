@@ -20,12 +20,14 @@ import ssh.client.Util.UtilLib;
 import ssh.client.ssh_config.SSHActions;
 import ssh.client.ssh_config.SSHConfig;
 import ssh.client.ssh_config.SSHConfigStore;
+import ssh.client.view.SSHConfigEditor;
 import ssh.client.view.SSHConfigTreeCluster;
 import ssh.client.view.TabNameGen;
 
 
 public class AppConfig {
 
+    private static Button openButton;
     private static TreeView<SSHConfig> treeView;
     private static TabPane tabPane;
     private static SSHConfig selectedConfig;
@@ -54,6 +56,7 @@ public class AppConfig {
         Platform.runLater(() -> {
             for (SSHConfig sshConfig : SSHConfigStore.getOpenOnStartupConfigs()) {
                 openTerminal(sshConfig);
+                SSHConfigEditor.configureSSH(sshConfig);
             }
             if (TabNameGen.activeInstances <= 0) {
                 initTerminal();
@@ -112,14 +115,8 @@ public class AppConfig {
     }
 
     private void initTreeView() {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem openSession = new MenuItem("Open Session in new tab.");
-        openSession.setOnAction(actionEvent -> {
-            if (selectedConfig != null) {
-                openTerminal(selectedConfig);
-            }
-        });
-        contextMenu.getItems().addAll(openSession);
+        ContextMenu contextMenu = initContextMenu();
+
         SSHConfigTreeCluster treeItem = new SSHConfigTreeCluster(SSHConfig.setupRootFolder(SSHConfigStore.getConfigDir()));
         treeItem.setExpanded(true);
         treeView = new TreeView<>(treeItem);
@@ -128,8 +125,30 @@ public class AppConfig {
             if (!newValue.getValue().isFolder()) {
                 selectedConfig = newValue.getValue();
                 LogLib.writeDebugLog("Selected config:" + selectedConfig.objectToString());
+                openButton.setDisable(false);
+                openButton.setText(Constants.BUTTON_OPEN_SESSION_PREFIX + " (" + selectedConfig.getName() + ")");
+            } else {
+                selectedConfig = null;
+                openButton.setDisable(true);
+                openButton.setText(Constants.BUTTON_OPEN_SESSION_PREFIX);
             }
         });
+    }
+
+    private ContextMenu initContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem openSession = new MenuItem("Open Session in new tab.");
+        openSession.setOnAction(actionEvent -> {
+            if (selectedConfig != null) {
+                openTerminal(selectedConfig);
+            }
+        });
+        MenuItem editSession = new MenuItem("Edit Session");
+        editSession.setOnAction(actionEvent -> {
+            SSHConfigEditor.configureSSH(selectedConfig);
+        });
+        contextMenu.getItems().addAll(openSession, editSession);
+        return contextMenu;
     }
 
     private VBox initTop() {
@@ -141,12 +160,13 @@ public class AppConfig {
     }
 
     private ToolBar initToolBar() {
-        Button button = new Button();
-        button.setText("Test");
-        button.setOnAction(actionEvent -> {
-            System.out.println("Test");
+        openButton = new Button();
+        openButton.setDisable(true);
+        openButton.setText(Constants.BUTTON_OPEN_SESSION_PREFIX);
+        openButton.setOnAction(actionEvent -> {
+            openTerminal(selectedConfig);
         });
-        ToolBar tools = new ToolBar(button);
+        ToolBar tools = new ToolBar(openButton);
         return tools;
     }
 
@@ -194,6 +214,7 @@ public class AppConfig {
         terminal.onTerminalFxReady(() -> {
             try {
                 SSHActions.login(terminal, sshConfig);
+                selectedConfig = sshConfig;
             } catch (Exception e) {
                 LogLib.writeErrorLog(e);
             }

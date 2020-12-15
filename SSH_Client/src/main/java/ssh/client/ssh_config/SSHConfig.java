@@ -174,6 +174,15 @@ public class SSHConfig {
         return loginActions;
     }
 
+    public String getLoginActionsForTextArea() {
+        String loginActions = "";
+        for (String loginAction: this.loginActions) {
+            loginActions = loginActions + Constants.LINE_SEPARATOR + loginAction;
+        }
+        loginActions = loginActions.replaceFirst(Constants.LINE_SEPARATOR, "");
+        return loginActions;
+    }
+
     public void setLoginActions(String loginActionsStr) {
         loginActions = new ArrayList<>();
         for (String loginAction : loginActionsStr.split(LOGIN_ACTIONS_SEPARATOR)) {
@@ -225,7 +234,7 @@ public class SSHConfig {
         else if (isFolder())
             return getFileName();
         else
-            return "" + getFileName() + " [\"" + name + "\" - " + username + "@" + ipAddress + "]";
+            return "" + getFileName() + "\n[\"" + name + "\" - " + username + "@" + ipAddress + "]";
     }
 
     @Override
